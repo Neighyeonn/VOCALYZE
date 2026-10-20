@@ -16,6 +16,11 @@
     <button id="micBtn">Start microphone</button>
     <label class="file">Analyze a file <input id="fileIn" type="file" accept="audio/*" hidden></label>
     <span id="status" role="status">Ready.</span>
+    <div class="sens">
+      <label for="sens">Sensitivity</label>
+      <input id="sens" type="range" min="0" max="100" value="50">
+      <small><span>Voice only</span><span>Capture everything</span></small>
+    </div>
   </section>
 
   <section class="live" aria-live="off">
