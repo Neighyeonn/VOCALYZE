@@ -1,9 +1,9 @@
-import { analyzeFrame, summarize, noteName } from './dsp.js';
+import { analyzeFrame, summarize, noteName, sensitivityToOpts } from './dsp.js';
 import { buildReport } from './report.js';
 
 const $ = id => document.getElementById(id);
 const WIN = 2048, HOP = 512;
-let frames = [], ctx, stream, raf, running = false;
+let opts = sensitivityToOpts(0.5), loaded = null, frames = [], ctx, stream, raf, running = false;
 
 function showLive(f) {
   $('note').textContent = f.voiced ? noteName(f.midi) : '–';
@@ -57,7 +57,7 @@ async function startMic() {
   (function loop() {
     if (!running) return;
     an.getFloatTimeDomainData(buf);
-    const f = analyzeFrame(buf, ctx.sampleRate); f.t = ctx.currentTime - t0;
+    const f = analyzeFrame(buf, ctx.sampleRate, opts); f.t = ctx.currentTime - t0;
     frames.push(f); showLive(f); drawTrace(frames, 8);
     raf = requestAnimationFrame(loop);
   })();
@@ -70,6 +70,17 @@ function stopMic() {
   drawTrace(frames, 0); showReport();
 }
 
+async function runFile() {
+  const { data, sr, duration } = loaded;
+  frames = []; $('report').hidden = true;
+  for (let i = 0; i + WIN <= data.length; i += HOP) {
+    const f = analyzeFrame(data.subarray(i, i + WIN), sr, opts); f.t = i / sr; frames.push(f);
+    if (frames.length % 100 === 0) { $('status').textContent = `Analyzing… ${Math.round((i / data.length) * 100)}%`; await new Promise(r => setTimeout(r)); }
+  }
+  $('status').textContent = `Analyzed ${duration.toFixed(1)} s.`;
+  showLive({ voiced: false }); drawTrace(frames, 0); showReport();
+}
+
 async function analyzeFile(file) {
   if (running) stopMic();
   $('status').textContent = 'Decoding…'; $('report').hidden = true;
@@ -78,15 +89,12 @@ async function analyzeFile(file) {
   try { audio = await ac.decodeAudioData(await file.arrayBuffer()); }
   catch { $('status').textContent = 'Could not read that file. Try WAV, MP3 or M4A.'; return; }
   finally { ac.close(); }
-  const data = audio.getChannelData(0), sr = audio.sampleRate;
-  frames = [];
-  for (let i = 0; i + WIN <= data.length; i += HOP) {
-    const f = analyzeFrame(data.subarray(i, i + WIN), sr); f.t = i / sr; frames.push(f);
-    if (frames.length % 100 === 0) { $('status').textContent = `Analyzing… ${Math.round((i / data.length) * 100)}%`; await new Promise(r => setTimeout(r)); }
-  }
-  $('status').textContent = `Analyzed ${audio.duration.toFixed(1)} s.`;
-  showLive({ voiced: false }); drawTrace(frames, 0); showReport();
+  loaded = { data: audio.getChannelData(0), sr: audio.sampleRate, duration: audio.duration };
+  await runFile();
 }
 
 $('micBtn').onclick = () => (running ? stopMic() : startMic());
 $('fileIn').onchange = e => e.target.files[0] && analyzeFile(e.target.files[0]);
+$('sens').oninput = e => { opts = sensitivityToOpts(e.target.value / 100); };
+// File mode: re-analyze the loaded file when the slider is released.
+$('sens').onchange = () => { if (loaded && !running) runFile(); };

@@ -36,16 +36,22 @@ export function yin(buf, sr, { fMin = 70, fMax = 1000, thr = 0.15 } = {}) {
 }
 
 // Analyse one frame -> {voiced, f0, midi, cents, rms, clarity, hnr}
-export function analyzeFrame(buf, sr) {
+export function analyzeFrame(buf, sr, { rmsGate = 0.008, minClarity = 0.6 } = {}) {
   const r = rms(buf);
-  if (r < 0.008) return { voiced: false, rms: r };
+  if (r < rmsGate) return { voiced: false, rms: r };
   const { f0, clarity } = yin(buf, sr);
-  if (clarity < 0.6) return { voiced: false, rms: r };
+  if (clarity < minClarity) return { voiced: false, rms: r };
   const cl = Math.min(0.9999, Math.max(0.0001, clarity));
   const hnr = 10 * Math.log10(cl / (1 - cl)); // HNR estimate from normalised autocorrelation peak
   const midi = 69 + 12 * Math.log2(f0 / 440);
   const cents = (midi - Math.round(midi)) * 100;
   return { voiced: true, f0, midi, cents, rms: r, clarity, hnr };
+}
+
+// Maps a 0..1 sensitivity slider to detection thresholds.
+// 0 = strict (loud, clearly pitched sounds only), 1 = sensitive (quiet and noisy sounds too).
+export function sensitivityToOpts(s) {
+  return { rmsGate: 0.05 * Math.pow(0.002 / 0.05, s), minClarity: 0.85 - 0.45 * s };
 }
 
 const NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
