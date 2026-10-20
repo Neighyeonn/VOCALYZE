@@ -10,6 +10,7 @@ h2{margin:0 0 .75rem;font-size:1.1rem}
 button,.file{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:.6rem 1rem;font:inherit;cursor:pointer}
 .file{background:transparent;color:var(--acc);border:1px solid var(--acc)}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.sens{flex-basis:100%;display:grid;gap:.2rem}.sens input{width:100%;accent-color:var(--acc)}.sens small{display:flex;justify-content:space-between}
 #status{color:var(--mute);font-size:.9rem}
 .live{display:grid;gap:.75rem}
 .note{display:flex;align-items:baseline;gap:.75rem}#note{font-size:3rem;font-weight:700;min-width:5ch}
