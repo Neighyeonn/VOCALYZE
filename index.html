@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocalyze</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <h1>Vocalyze</h1>
+  <p>Sing or upload a recording. See your pitch, stability and tone as numbers.</p>
+</header>
+<main>
+  <section class="controls">
+    <button id="micBtn">Start microphone</button>
+    <label class="file">Analyze a file <input id="fileIn" type="file" accept="audio/*" hidden></label>
+    <span id="status" role="status">Ready.</span>
+  </section>
+
+  <section class="live" aria-live="off">
+    <div class="note"><span id="note">–</span><small id="hz">– Hz</small></div>
+    <div class="meter" title="Cents from nearest note"><i id="needle"></i></div>
+    <div class="stats">
+      <div><b id="cents">–</b><small>cents</small></div>
+      <div><b id="hnr">–</b><small>HNR dB</small></div>
+      <div><b id="clar">–</b><small>clarity</small></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Pitch trace</h2>
+    <canvas id="trace" width="1000" height="320"></canvas>
+  </section>
+
+  <section id="report" hidden>
+    <h2>Report</h2>
+    <table id="metrics"></table>
+    <ul id="advice"></ul>
+  </section>
+</main>
+<footer>Educational training tool. Not a substitute for evaluation by an otolaryngologist.</footer>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+:root{--bg:#f6f7f9;--fg:#1b2330;--mute:#667085;--card:#fff;--line:#dfe3ea;--acc:#2f5bea;--ok:#1a9d6a;--bad:#d4452f;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#10141c;--fg:#e8ecf3;--mute:#8b95a7;--card:#181e29;--line:#2a3242;--acc:#7c9bff;--ok:#4cc79b;--bad:#ff7d68;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header,main,footer{max-width:960px;margin:0 auto;padding:0 1rem}
+header{padding-top:2rem}h1{margin:0;font-size:2rem;letter-spacing:-.02em}header p{margin:.25rem 0 0;color:var(--mute)}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem;margin:1rem 0}
+h2{margin:0 0 .75rem;font-size:1.1rem}
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+button,.file{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:.6rem 1rem;font:inherit;cursor:pointer}
+.file{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+#status{color:var(--mute);font-size:.9rem}
+.live{display:grid;gap:.75rem}
+.note{display:flex;align-items:baseline;gap:.75rem}#note{font-size:3rem;font-weight:700;min-width:5ch}
+small{color:var(--mute)}
+.meter{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--bad),var(--ok) 40%,var(--ok) 60%,var(--bad))}
+#needle{position:absolute;top:-4px;left:50%;width:4px;height:18px;background:var(--fg);border-radius:2px;transition:left .06s}
+.stats{display:flex;gap:2rem}.stats b{font-size:1.4rem;display:block}
+canvas{width:100%;height:auto;display:block;border-radius:6px;background:var(--bg)}
+table{width:100%;border-collapse:collapse}td{padding:.4rem .5rem;border-bottom:1px solid var(--line)}td:nth-child(2){font-weight:600}td:nth-child(3){color:var(--mute);font-size:.9rem}
+li{margin:.4rem 0}footer{color:var(--mute);font-size:.85rem;padding-bottom:2rem}
